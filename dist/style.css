@@ -46,3 +46,39 @@ html.intro-pending #solar-intro,#solar-intro.intro-complete{display:block;positi
 html.intro-pending{background:#050912}
 
 @media(max-width:760px){.array-tag{bottom:36.5%}}
+
+/* Warm whites, mineral tones, and sunlight give the showroom a living atmosphere. */
+:root{--yellow:#f4cc50;--yellow-deep:#c68a12;--line:#d9cda945;background:#f7f2e5;--muted:#817d72}
+body{background:#f7f2e5}
+.stage{isolation:isolate;background:radial-gradient(ellipse at var(--sun-x,42%) 51%,#fff9da 0%,#fbf6e8 35%,transparent 66%),linear-gradient(125deg,#fffefa 0%,#f7f3e9 48%,#eee4cf 100%)}
+.stage::before{content:'';position:absolute;inset:-15%;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 5% 8%,#ffdf7766,transparent 48%),linear-gradient(119deg,transparent 22%,#fffaf194 29%,transparent 36%,transparent 48%,#edc45b18 57%,transparent 68%);animation:sunlightDrift 22s ease-in-out infinite alternate;will-change:transform}
+.stage::after{content:'';position:absolute;z-index:0;width:78vw;height:78vw;left:50%;top:31%;transform:translate(-50%,-16%);border:1px solid #b5923b13;border-radius:50%;box-shadow:0 0 0 6vw #b5923b05,0 0 0 12vw #b5923b04;pointer-events:none}
+@keyframes sunlightDrift{from{transform:translate3d(-2%,-1%,0) rotate(-2deg)}to{transform:translate3d(3%,2%,0) rotate(3deg)}}
+.logo-window{background:transparent;mix-blend-mode:multiply}.logo-window img{mix-blend-mode:multiply}
+.language-switch select{background:#fffdf5b3;border-color:#ddd1b966;box-shadow:0 4px 12px #a47d0710}
+.contact-button{background:linear-gradient(130deg,#ffe58a,#edbe36);box-shadow:inset 0 1px 0 #fff5c9,0 7px 22px #af85231c}
+.contact-button:hover{background:linear-gradient(130deg,#ffea9a,#f2c748)}
+h1 em:after,.lab-copy h2 em:after{background:linear-gradient(90deg,#efbd37,#ffeaa0 55%,#e9bf45)}
+.energy-note{padding:18px 17px;background:linear-gradient(145deg,#fffef985,#fff4ce66);border:1px solid #fffefa;border-radius:20px;box-shadow:0 12px 38px #8169270a,inset 0 0 20px #ffffff66}
+.round-link{background:#fff9e775;border-color:#c9b98788;box-shadow:0 3px 9px #9886500a}
+.control-deck{padding:18px 22px;border:1px solid #fffefb;border-radius:20px;background:linear-gradient(115deg,#fffef9cf,#faf3e3ad);box-shadow:0 9px 35px #8d6e1f09,inset 0 1px 0 #fff;backdrop-filter:blur(12px)}
+.system-switch{background:#e9e3d8}.system-switch button.active{background:linear-gradient(140deg,#263f57,#102942);box-shadow:0 3px 8px #112d4526}.motion-toggle{background:#fffcf0;border-color:#ded2b5}.daylight-track>span{color:#827e73}
+.journey-progress{background:#e7dcc5}.journey-progress span{background:linear-gradient(90deg,#c09325,#f5d97b)}
+.scene-toolbar{position:absolute;bottom:14.2%;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:20px;z-index:6;white-space:nowrap}
+.scene-toolbar .array-tag{position:static;transform:none;color:#766d5b;font-size:9px}.scene-toolbar .tag-line{background:#baa36a;width:24px}
+#detail-toggle{display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 13px;color:#4c493e;background:#fff9e8b5;border:1px solid #cab47f88;border-radius:999px;font:inherit;font-size:11px;cursor:pointer;box-shadow:0 3px 12px #a5821f0a;transition:background .2s,box-shadow .2s}
+#detail-toggle svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+#detail-toggle:hover,#detail-toggle[aria-pressed=true]{background:#f6d983;box-shadow:0 3px 14px #b18b2320}
+.showing-detail .scene-note .mini-label{color:#a26e0d}.showing-detail .round-link{visibility:hidden}
+.contact-section{background:radial-gradient(ellipse at 6% 8%,#fff0b2 0%,transparent 54%),radial-gradient(ellipse at 96% 92%,#ca911e77,transparent 58%),linear-gradient(115deg,#f7d96d,#edc043 65%,#ddb33e)}
+.contact-details{background:linear-gradient(130deg,#fffefb,#fbf4e2);border:1px solid #fff8db;box-shadow:0 22px 55px #7b561c1c,inset 0 1px 0 #fff}
+footer{background:linear-gradient(110deg,#faf8f0,#eee6d5)}
+.scene-fallback img{mix-blend-mode:multiply}.motion-paused .stage::before{animation-play-state:paused}
+#solar-intro.intro-complete{background:#f8f3e5}
+@media(min-width:1500px){.control-deck{padding:22px 28px}.scene-toolbar{bottom:14.5%}.scene-toolbar .array-tag{font-size:10px}#detail-toggle{font-size:12px}}
+@media(max-width:1000px) and (min-width:761px){.energy-note{padding:13px 12px}.scene-toolbar{gap:12px}.control-deck{padding:15px 18px}}
+@media(max-width:760px){.stage::after{width:130vw;height:130vw;top:38%}.energy-note{padding:0;background:none;border:0;box-shadow:none}.control-deck{padding:14px 13px;bottom:16px;border-radius:16px;gap:12px}.daylight-heading label{font-size:12px}.daylight-track{gap:8px}.daylight-track>span{font-size:8px}.scene-toolbar{bottom:35.5%;gap:12px;width:90%}.scene-toolbar .array-tag{font-size:8px}.scene-toolbar .tag-line{display:none}#detail-toggle{font-size:10px;padding:7px 9px;gap:5px}.showing-detail .hero-description{font-size:12px}.showing-detail .hero-description br{display:block}}
+@media(prefers-reduced-motion:reduce){.stage::before{animation:none}}
+
+/* Clip decorative light rings without creating an internal scrolling surface. */
+.stage{overflow:clip}.site-header{mix-blend-mode:multiply}

@@ -5,7 +5,7 @@ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 let language='he';
 try{const requested=new URL(location.href).searchParams.get('lang');const saved=localStorage.getItem('sss-language');language=Object.hasOwn(translations,requested)?requested:Object.hasOwn(translations,saved)?saved:'he';}catch{}
 const t=key=>translations[language][key];
-const state={hour:10.5,progress:0,pointer:{x:0,y:0},paused:reduced.matches,system:'home',onScreen:true};
+const state={hour:10.5,progress:0,pointer:{x:0,y:0},paused:reduced.matches,system:'home',onScreen:true,detail:false};
 const range=$('#sun-range'),timeDisplay=$('#time-display'),energyValue=$('#energy-value');
 function setHour(value){
   state.hour=Number(value);
@@ -23,9 +23,20 @@ $('#motion-toggle').addEventListener('click',()=>{state.paused=!state.paused;syn
 reduced.addEventListener('change',event=>{state.paused=event.matches;syncMotion();});
 document.querySelectorAll('[data-system]').forEach(button=>button.addEventListener('click',()=>{
   state.system=button.dataset.system;
+  state.detail=false;syncDetails();
   $('#array-caption').textContent=state.system==='business'?t('arrayBusiness'):t('arrayHome');
   document.querySelectorAll('[data-system]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});
 }));
+function syncDetails(){
+  $('.stage').classList.toggle('showing-detail',state.detail);
+  $('#detail-toggle').setAttribute('aria-pressed',String(state.detail));
+  $('#detail-toggle span').textContent=state.detail?t('detailClose'):t('detailOpen');
+  $('.scene-note .mini-label').textContent=state.detail?t('detailEyebrow'):t('noteLabel');
+  setLines($('.hero-description'),state.detail?t('detailDescription'):t('heroDescription'));
+  $('#array-caption').textContent=state.detail?t('detailCaption'):state.system==='business'?t('arrayBusiness'):t('arrayHome');
+}
+$('#detail-toggle').addEventListener('click',()=>{state.detail=!state.detail;syncDetails();});
+window.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.detail){state.detail=false;syncDetails();$('#detail-toggle').focus({preventScroll:true});}});
 window.addEventListener('pointermove',event=>{if(event.pointerType==='mouse'&&!state.paused){state.pointer.x=(event.clientX/innerWidth-.5)*2;state.pointer.y=(event.clientY/innerHeight-.5)*2;}},{passive:true});
 const hero=$('.hero-copy'),lab=$('.lab-copy'),stage=$('.stage'),journey=$('.journey');
 let scheduled=false;
@@ -67,7 +78,7 @@ intro.addEventListener('keydown',event=>{
 window.addEventListener('solar-intro-timeout',skipIntro,{once:true});
 reduced.addEventListener('change',event=>{if(event.matches)skipIntro();});
 try{solarScene=createSolarScene($('#scene'),state,revealWebsite);}catch(error){
-  console.error('3D scene unavailable:',error);$('.scene-fallback').hidden=false;$('#scene').hidden=true;revealWebsite();
+  console.error('3D scene unavailable:',error);$('.scene-fallback').hidden=false;$('#scene').hidden=true;$('#detail-toggle').hidden=true;revealWebsite();
 }
 function setLines(element,text,heading=false){
   element.replaceChildren();const lines=text.split('\n');
@@ -83,7 +94,7 @@ function applyLanguage(code,persist=false){
   document.title=`Saleh Solar System — ${t('title')}`;document.querySelector('meta[name="description"]').content=t('description');
   $('#language-select').value=language;
   $('#array-caption').textContent=state.system==='business'?t('arrayBusiness'):t('arrayHome');
-  setHour(state.hour);syncMotion();
+  setHour(state.hour);syncMotion();syncDetails();
   if(persist){try{localStorage.setItem('sss-language',language);}catch{}const url=new URL(location.href);url.searchParams.set('lang',language);history.replaceState(null,'',url);}
   updateScroll();
 }

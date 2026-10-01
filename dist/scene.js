@@ -6,8 +6,8 @@ const smooth = (a, b, value) => THREE.MathUtils.smoothstep(value, a, b);
 export function createSolarScene(container, state, onIntroComplete = () => {}) {
   const introHost = document.querySelector('#intro-scene');
   let introActive = document.documentElement.classList.contains('intro-pending');
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.shadowMap.enabled = true;
@@ -16,16 +16,16 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   const scene = new THREE.Scene();
   const background = new THREE.Color(0xffffff);
   const night = new THREE.Color(0x050912);
-  const white = new THREE.Color(0xffffff);
+  const white = new THREE.Color(0xf8f3e5);
   const camera = new THREE.PerspectiveCamera(34, 1, .1, 100);
   const clock = new THREE.Clock();
 
   // Reflection cards give the glass and aluminum a moving studio highlight.
   const environmentScene = new THREE.Scene();
-  environmentScene.background = new THREE.Color(0x233144);
+  environmentScene.background = new THREE.Color(0x677782);
   for (const [x,y,z,w,h,color,rx,ry] of [
-    [0,8,0,8,9,0xd7e5f5,-Math.PI/2,0],
-    [-7,4,3,3,7,0xffe9ba,0,Math.PI/2],
+    [0,8,0,7,10,0xffffff,-Math.PI/2,0],
+    [-7,4,3,5,9,0xfff2cf,0,Math.PI/2],
     [6,2,-5,2,7,0x6585aa,0,0],
   ]) {
     const card = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.MeshBasicMaterial({color, side:THREE.DoubleSide}));
@@ -40,7 +40,7 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   const hemi = new THREE.HemisphereLight(0xe5efff, 0x48536a, 1.25);
   const sun = new THREE.DirectionalLight(0xffe3a9, 3.6);
   sun.position.set(-8,12,5); sun.castShadow = true;
-  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.mapSize.set(2048,2048);
   Object.assign(sun.shadow.camera, {left:-8,right:8,top:8,bottom:-8,near:.5,far:45});
   sun.shadow.normalBias = .035; sun.shadow.bias = -.00025;
   const rim = new THREE.DirectionalLight(0x9fbcf1, 1.5); rim.position.set(5,3,-7);
@@ -48,9 +48,13 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   scene.add(hemi,sun,rim,currentLight);
 
   const installation = new THREE.Group(); scene.add(installation);
-  const aluminum = new THREE.MeshStandardMaterial({color:0xb9c4d1, metalness:.85, roughness:.25});
+  const brushing=document.createElement('canvas');brushing.width=256;brushing.height=256;
+  const brush=brushing.getContext('2d');brush.fillStyle='#909090';brush.fillRect(0,0,256,256);
+  for(let i=0;i<256;i++){brush.fillStyle=`rgba(255,255,255,${.08+.12*Math.sin(i*12.7)**2})`;brush.fillRect(0,i,256,1);}
+  const brushTexture=new THREE.CanvasTexture(brushing);brushTexture.wrapS=brushTexture.wrapT=THREE.RepeatWrapping;
+  const aluminum = new THREE.MeshStandardMaterial({color:0xd1d8db, metalness:.65, roughness:.3,roughnessMap:brushTexture,envMapIntensity:1.25});
   const charcoal = new THREE.MeshStandardMaterial({color:0x132137, metalness:.45, roughness:.4});
-  const stone = new THREE.MeshStandardMaterial({color:0xf6f6f3, metalness:.05, roughness:.68});
+  const stone = new THREE.MeshStandardMaterial({color:0xe9e4d7, metalness:.08, roughness:.55});
   const gold = new THREE.MeshStandardMaterial({color:0xf5bc1c, metalness:.6, roughness:.3});
   function box(w,h,d,material,parent,x=0,y=0,z=0) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
@@ -69,43 +73,84 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   const under=roundedBlock(7.12,.15,5.51,.1,charcoal);under.position.y=-.77;installation.add(under);
   const trim=roundedBlock(7.16,.025,5.55,.11,gold);trim.position.y=-.68;installation.add(trim);
 
-  // Every cell is drawn locally; no external models or image requests are needed.
-  const textureCanvas=document.createElement('canvas');textureCanvas.width=768;textureCanvas.height=1024;
-  const ctx=textureCanvas.getContext('2d');ctx.fillStyle='#51677b';ctx.fillRect(0,0,768,1024);
-  for(let y=0;y<10;y++)for(let x=0;x<6;x++){
-    const px=x*128+3,py=y*102.4+3,w=122,h=96.4,k=7;
-    const gradient=ctx.createLinearGradient(px,py,px+w,py+h);
-    gradient.addColorStop(0,'#133656');gradient.addColorStop(1,`rgb(${6+(x+y)%3},${20+(x*y)%4},${39+y%3})`);
-    ctx.fillStyle=gradient;ctx.beginPath();ctx.moveTo(px+k,py);ctx.lineTo(px+w-k,py);ctx.lineTo(px+w,py+k);
-    ctx.lineTo(px+w,py+h-k);ctx.lineTo(px+w-k,py+h);ctx.lineTo(px+k,py+h);ctx.lineTo(px,py+h-k);ctx.lineTo(px,py+k);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='#547594';ctx.lineWidth=.7;
-    for(let l=1;l<12;l++){ctx.beginPath();ctx.moveTo(px+2,py+l*h/12);ctx.lineTo(px+w-2,py+l*h/12);ctx.stroke();}
-    ctx.strokeStyle='#728b9d';ctx.lineWidth=1.1;
-    for(let l=1;l<4;l++){ctx.beginPath();ctx.moveTo(px+l*w/4,py);ctx.lineTo(px+l*w/4,py+h);ctx.stroke();}
+  // A micro-texture belongs to each individual silicon wafer, rather than a grid on a flat panel.
+  const cellCanvas=document.createElement('canvas');cellCanvas.width=512;cellCanvas.height=512;
+  const ctx=cellCanvas.getContext('2d');
+  const waferGradient=ctx.createLinearGradient(0,0,512,512);
+  waferGradient.addColorStop(0,'#d5e7ee');waferGradient.addColorStop(.45,'#95abb7');waferGradient.addColorStop(1,'#bbd0db');
+  ctx.fillStyle=waferGradient;ctx.fillRect(0,0,512,512);
+  let seed=419;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+  for(let i=0;i<150;i++){
+    const x=random()*512,y=random()*512,size=12+random()*65;
+    ctx.fillStyle=`rgba(${random()>.5?'255,255,255':'20,40,60'},${.025+random()*.045})`;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+size,y+size*.22);ctx.lineTo(x+size*.65,y+size);ctx.closePath();ctx.fill();
   }
-  const texture=new THREE.CanvasTexture(textureCanvas);texture.colorSpace=THREE.SRGBColorSpace;
-  texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-  const glass=new THREE.MeshPhysicalMaterial({map:texture,color:0x90b4d5,roughness:.24,metalness:.32,clearcoat:.65,clearcoatRoughness:.18,envMapIntensity:.32});
+  for(let i=0;i<34;i++){ctx.fillStyle='#d7e3e745';ctx.fillRect(0,i*15.5,512,.85);}
+  for(const x of [104,256,408]){
+    const bus=ctx.createLinearGradient(x-3,0,x+3,0);bus.addColorStop(0,'#6c829280');bus.addColorStop(.5,'#e3ded1bb');bus.addColorStop(1,'#879ca480');
+    ctx.fillStyle=bus;ctx.fillRect(x-2,0,4,512);
+  }
+  const cellTexture=new THREE.CanvasTexture(cellCanvas);cellTexture.colorSpace=THREE.SRGBColorSpace;
+  cellTexture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  const silicon=new THREE.MeshPhysicalMaterial({map:cellTexture,metalness:.48,roughness:.27,clearcoat:.7,clearcoatRoughness:.18,envMapIntensity:.75});
+  const gasket=new THREE.MeshStandardMaterial({color:0x080e17,roughness:.58,metalness:.15});
+  const glassMaterial=new THREE.MeshPhysicalMaterial({color:0xcbe3ec,metalness:.05,roughness:.08,clearcoat:1,clearcoatRoughness:.06,transparent:true,opacity:.15,envMapIntensity:1.7,depthWrite:false});
+  const glintUniforms={phase:{value:0},strength:{value:.13}};
+  const glintMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:glintUniforms,
+    vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader:'varying vec2 vUv;uniform float phase;uniform float strength;void main(){float d=vUv.x*.75+vUv.y*.6-phase;float reflection=exp(-pow(d/.23,2.))+.2*exp(-pow((d-.26)/.018,2.));gl_FragColor=vec4(.83,.93,1.,reflection*strength);}'
+  });
+  const cw=.224,ch=.211,k=.023,cellShape=new THREE.Shape();
+  cellShape.moveTo(-cw/2+k,-ch/2);cellShape.lineTo(cw/2-k,-ch/2);cellShape.lineTo(cw/2,-ch/2+k);
+  cellShape.lineTo(cw/2,ch/2-k);cellShape.lineTo(cw/2-k,ch/2);cellShape.lineTo(-cw/2+k,ch/2);
+  cellShape.lineTo(-cw/2,ch/2-k);cellShape.lineTo(-cw/2,-ch/2+k);cellShape.closePath();
+  const cellGeometry=new THREE.ExtrudeGeometry(cellShape,{depth:.009,bevelEnabled:false,steps:1});
+  const pos=cellGeometry.getAttribute('position'),uv=cellGeometry.getAttribute('uv');
+  for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)/cw+.5,pos.getY(i)/ch+.5);
+  cellGeometry.rotateX(-Math.PI/2);
+  const matrix=new THREE.Matrix4(),cellColor=new THREE.Color();
+  const boltGeometry=new THREE.CylinderGeometry(.027,.027,.024,6);
+  function buildPanel(){
+    const panel=new THREE.Group();
+    // Recessed backsheet, a rubber seal, and four actual aluminum frame extrusions.
+    const back=roundedBlock(1.57,.085,2.44,.028,charcoal);panel.add(back);
+    box(1.485,.021,2.35,gasket,panel,0,.052,0);
+    for(const x of [-.776,.776]){
+      box(.046,.135,2.45,aluminum,panel,x,.025,0);
+      box(.013,.013,2.44,aluminum,panel,x-Math.sign(x)*.029,.096,0);
+    }
+    for(const z of [-1.206,1.206])box(1.535,.135,.042,aluminum,panel,0,.025,z);
+    const cells=new THREE.InstancedMesh(cellGeometry,silicon,60);
+    for(let row=0;row<10;row++)for(let col=0;col<6;col++){
+      const i=row*6+col;
+      matrix.makeTranslation((col-2.5)*.238,.067,(row-4.5)*.227+(row<5?-.012:.012));cells.setMatrixAt(i,matrix);
+      cellColor.setHSL(.57+random()*.06,.34+random()*.1,.16+random()*.09);cells.setColorAt(i,cellColor);
+    }
+    cells.instanceMatrix.needsUpdate=true;cells.instanceColor.needsUpdate=true;panel.add(cells);
+    const cover=box(1.496,.019,2.36,glassMaterial,panel,0,.092,0);cover.castShadow=false;cover.receiveShadow=false;cover.renderOrder=2;
+    const sheen=new THREE.Mesh(new THREE.PlaneGeometry(1.48,2.34),glintMaterial);sheen.rotation.x=-Math.PI/2;sheen.position.y=.103;sheen.renderOrder=3;panel.add(sheen);
+    const hardware=new THREE.InstancedMesh(boltGeometry,aluminum,4);let index=0;
+    for(const x of [-.775,.775])for(const z of [-1.15,1.15]){matrix.makeTranslation(x,.105,z);hardware.setMatrixAt(index++,matrix);}
+    panel.add(hardware);
+    const junction=box(.25,.08,.18,charcoal,panel,0,-.09,.76);
+    panel.userData={cells,cover,sheen,junction};return panel;
+  }
   const panels=[];
-  const faceGeometry=new THREE.PlaneGeometry(1.465,2.31);
-  const boltGeometry=new THREE.CylinderGeometry(.022,.022,.018,6);
   for(let row=0;row<3;row++)for(let col=0;col<4;col++){
     const module=new THREE.Group();module.userData={row,col};module.position.set((col-1.5)*1.66,0,(row-.5)*2.62);installation.add(module);panels.push(module);
-    const panel=new THREE.Group();panel.position.y=.3;panel.rotation.x=-.27;module.add(panel);
-    box(1.59,.115,2.44,aluminum,panel);
-    box(1.505,.024,2.35,charcoal,panel,0,.069,0);
-    const face=new THREE.Mesh(faceGeometry,glass);face.rotation.x=-Math.PI/2;face.position.y=.085;face.receiveShadow=true;panel.add(face);
-    for(const x of [-.758,.758])for(const z of [-1.15,1.15]){
-      const bolt=new THREE.Mesh(boltGeometry,charcoal);bolt.position.set(x,.066,z);panel.add(bolt);
-    }
-    // Two triangulated mounts remain attached when the array changes size.
+    const panel=buildPanel();panel.position.y=.3;panel.rotation.x=-.27;module.add(panel);
     for(const x of [-.57,.57]){
-      box(.06,.3,.07,aluminum,module,x,-.17,-.9);
-      box(.06,.81,.07,aluminum,module,x,.075,.92);
-      const brace=box(.045,.052,1.89,charcoal,module,x,-.02,0);brace.rotation.x=-.27;
-      box(.17,.035,2.08,aluminum,module,x,-.315,0);
+      box(.075,.3,.075,aluminum,module,x,-.17,-.9);
+      box(.075,.81,.075,aluminum,module,x,.075,.92);
+      const brace=box(.05,.055,1.89,charcoal,module,x,-.02,0);brace.rotation.x=-.27;
+      box(.19,.038,2.08,aluminum,module,x,-.315,0);
+      for(const z of [-.85,.85])box(.23,.06,.12,aluminum,module,x,-.29,z);
     }
+    const wiring=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.12,.7),new THREE.Vector3(.22,-.08,.5),new THREE.Vector3(.3,-.2,0),new THREE.Vector3(.7,-.3,-.4)]);
+    module.add(new THREE.Mesh(new THREE.TubeGeometry(wiring,12,.018,5,false),charcoal));
   }
+  // The close-up separates the glass, silicon layer, and frame while keeping the live circuit below.
+  const detailPanel=buildPanel();detailPanel.rotation.set(-.27,0,0);detailPanel.position.y=-.03;detailPanel.visible=false;installation.add(detailPanel);
   const inverterGroup=new THREE.Group();inverterGroup.position.set(-2.35,-.42,2.92);installation.add(inverterGroup);
   const inverter=roundedBlock(.64,.57,.19,.07,stone);inverterGroup.add(inverter);
   const ledMaterial=new THREE.MeshBasicMaterial({color:0xffd23d});
@@ -132,8 +177,14 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
     circuit.add(packet);packets.push(packet);
   }
   const platform=new THREE.Group();scene.add(platform);
-  const platformMaterial=new THREE.MeshStandardMaterial({color:0xffd529,roughness:.58,metalness:.12});
-  const disk=new THREE.Mesh(new THREE.CylinderGeometry(5.05,5.12,.15,96),platformMaterial);disk.position.y=-1.48;disk.receiveShadow=true;platform.add(disk);
+  const sunCanvas=document.createElement('canvas');sunCanvas.width=sunCanvas.height=512;
+  const sunCtx=sunCanvas.getContext('2d'),sunGradient=sunCtx.createRadialGradient(175,130,20,256,256,340);
+  sunGradient.addColorStop(0,'#fff1b5');sunGradient.addColorStop(.48,'#f6ce64');sunGradient.addColorStop(.83,'#dca639');sunGradient.addColorStop(1,'#b57619');
+  sunCtx.fillStyle=sunGradient;sunCtx.fillRect(0,0,512,512);
+  for(const radius of [227,233,246]){sunCtx.beginPath();sunCtx.arc(256,256,radius,0,Math.PI*2);sunCtx.strokeStyle='#fff6ce88';sunCtx.lineWidth=1;sunCtx.stroke();}
+  const sunTexture=new THREE.CanvasTexture(sunCanvas);sunTexture.colorSpace=THREE.SRGBColorSpace;
+  const platformMaterial=new THREE.MeshStandardMaterial({map:sunTexture,roughness:.42,metalness:.32});
+  const disk=new THREE.Mesh(new THREE.CylinderGeometry(5.05,5.12,.18,96),[gold,platformMaterial,charcoal]);disk.position.y=-1.48;disk.receiveShadow=true;platform.add(disk);
   const platformEdge=new THREE.Mesh(new THREE.TorusGeometry(5.06,.022,6,96),gold);platformEdge.rotation.x=Math.PI/2;platformEdge.position.y=-1.408;platform.add(platformEdge);
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),new THREE.ShadowMaterial({opacity:.13}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.57;floor.receiveShadow=true;scene.add(floor);
 
@@ -156,7 +207,7 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   const dust=new THREE.Points(dustGeometry,dustMaterial);scene.add(dust);
 
   let width=1,height=1,mobile=false,visible=!document.hidden,time=0,introTime=0,frames=0,totalFrameTime=0;
-  let currentProgress=state.progress,currentHour=state.hour,currentBusiness=0,qualityAdjusted=false;
+  let currentProgress=state.progress,currentHour=state.hour,currentBusiness=0,detailAmount=0,qualityAdjusted=false;
   const cameraTarget=new THREE.Vector3();
   function resize(){
     const host=introActive?introHost:container;
@@ -174,7 +225,7 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   }
   function getCameraTarget(){
     const p=currentProgress,angle=.64-p*.85+Math.sin(time*.12)*.025;
-    const radius=(mobile?20.8:14.5)-p*.3+currentBusiness*1.5;
+    const radius=(mobile?20.8:14)-p*.3+currentBusiness*1.5+detailAmount*.7;
     cameraTarget.set(Math.sin(angle)*radius,(mobile?12.7:7.9)+p*2,Math.cos(angle)*radius);
     cameraTarget.x+=state.pointer.x*.3;cameraTarget.y+=state.pointer.y*.2;return cameraTarget;
   }
@@ -188,11 +239,12 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
     currentProgress=mix(currentProgress,state.progress,damping);
     currentHour=mix(currentHour,state.hour,damping);
     currentBusiness=mix(currentBusiness,state.system==='business'?1:0,damping);
+    detailAmount=mix(detailAmount,state.detail?1:0,damping);
     const strike=introActive?smooth(1.55,2.65,introTime):1;
     const dawn=introActive?smooth(3.1,4.4,introTime):1;
     const daylight=Math.max(0,Math.sin((currentHour-6)/12*Math.PI));
     const power=daylight*strike;
-    background.copy(night).lerp(white,dawn);renderer.setClearColor(background);
+    background.copy(night).lerp(white,dawn);renderer.setClearColor(background,introActive?1:0);
     scene.environmentIntensity=introActive?.06+strike*.74:.8;
     if(introActive){
       const angle=.82-smooth(0,4.5,introTime)*.18,radius=mobile?Math.max(23,20/camera.aspect):17.5;
@@ -202,13 +254,22 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
       document.querySelector('#solar-intro').style.setProperty('--intro-light',String(strike));
       document.querySelector('#intro-progress').style.transform=`scaleX(${Math.min(1,introTime/4.65)})`;
     }else{
-      camera.position.lerp(getCameraTarget(),damping);camera.lookAt(0,-1,0);
+      camera.position.lerp(getCameraTarget(),damping);camera.lookAt(0,mobile?mix(-1.15,-1.25,detailAmount):mix(-1,-.5,detailAmount),0);
     }
     installation.position.y=.08+Math.sin(time*.65)*.045;
     installation.rotation.y=Math.sin(time*.13)*.025;
     platform.scale.set(1+currentBusiness*.14,1,1+currentBusiness*.14);
     base.scale.z=under.scale.z=trim.scale.z=1+currentBusiness*.42;
-    panels.forEach((module)=>{const {row}=module.userData;module.visible=row<(state.system==='business'?3:2);module.position.z=(row-(.5+currentBusiness*.5))*(2.62-currentBusiness*.12);});
+    panels.forEach((module)=>{const {row}=module.userData;module.visible=detailAmount<.99&&row<(state.system==='business'?3:2);module.scale.setScalar(Math.max(.001,1-detailAmount));module.position.z=(row-(.5+currentBusiness*.5))*(2.62-currentBusiness*.12);});
+    detailPanel.visible=detailAmount>.01;
+    detailPanel.scale.setScalar(2.6*detailAmount);
+    detailPanel.userData.cells.position.y=detailAmount*.17;
+    detailPanel.userData.cover.position.y=.092+detailAmount*.44;
+    detailPanel.userData.sheen.position.y=.103+detailAmount*.44;
+    glintUniforms.phase.value=.45+Math.sin(time*.22)*.34+(currentHour-12)*.024;
+    glintUniforms.strength.value=(introActive?strike:1)*(.12+daylight*.13);
+    document.querySelector('.stage').style.setProperty('--sun-x',`${18+(currentHour-6)/12*65}%`);
+    container.dataset.detail=state.detail?'open':'closed';
     inverterGroup.position.z=2.92+currentBusiness*1.16;circuit.position.z=currentBusiness*1.16;
     const sunAngle=(currentHour-6)/12*Math.PI;
     if(introActive)sun.position.set(-9,12,5);else sun.position.set(-Math.cos(sunAngle)*12,Math.max(1.1,Math.sin(sunAngle)*12),5);

@@ -47,7 +47,12 @@ export const translations = {
     "footerTagline": "A brighter kind of everyday.",
     "credit": "Design & development by",
     "introSkip": "Enter website",
-    "introCaption": "It starts with a little light."
+    "introCaption": "It starts with a little light.",
+    "detailOpen": "A closer look",
+    "detailClose": "Back to the array",
+    "detailEyebrow": "ENERGY IS IN THE DETAILS",
+    "detailDescription": "A layer of clear glass.\nIndividual silicon cells.\nA brushed aluminum frame.",
+    "detailCaption": "THE PANEL, LAYER BY LAYER"
   },
   "he": {
     "dir": "rtl",
@@ -97,7 +102,12 @@ export const translations = {
     "footerTagline": "יום־יום באור חדש.",
     "credit": "עיצוב ופיתוח",
     "introSkip": "כניסה לאתר",
-    "introCaption": "הכול מתחיל בקרן אור."
+    "introCaption": "הכול מתחיל בקרן אור.",
+    "detailOpen": "מבט מקרוב",
+    "detailClose": "בחזרה למערכת",
+    "detailEyebrow": "האנרגיה שבפרטים",
+    "detailDescription": "שכבת זכוכית שקופה.\nתאי סיליקון נפרדים.\nמסגרת אלומיניום מוברש.",
+    "detailCaption": "הפאנל, שכבה אחר שכבה"
   },
   "ar": {
     "dir": "rtl",
@@ -147,6 +157,11 @@ export const translations = {
     "footerTagline": "كل يوم أكثر إشراقًا.",
     "credit": "تصميم وتطوير",
     "introSkip": "الدخول إلى الموقع",
-    "introCaption": "كل شيء يبدأ بشعاع ضوء."
+    "introCaption": "كل شيء يبدأ بشعاع ضوء.",
+    "detailOpen": "نظرة أقرب",
+    "detailClose": "العودة للمنظومة",
+    "detailEyebrow": "الطاقة في التفاصيل",
+    "detailDescription": "طبقة زجاج شفافة.\nخلايا سيليكون منفصلة.\nإطار ألمنيوم مصقول.",
+    "detailCaption": "اللوح، طبقة تلو الأخرى"
   }
 };

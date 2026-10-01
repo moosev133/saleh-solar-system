@@ -1,6 +1,6 @@
 # Saleh Solar System
 
-A white-and-yellow, interactive solar showcase for Saleh Zedany, created as a moosetvs portfolio project.
+An ivory-and-gold, interactive solar showcase for Saleh Zedany, created as a moosetvs portfolio project.
 
 ## Review online
 
@@ -22,9 +22,11 @@ Translations are in `dist/translations.js`. Shared owner/contact information is 
 
 ## Experience
 
-- A bright white showroom, centered typography, a yellow 3D platform, and the supplied SOLARSALH logo.
+- A layered ivory, cream, and honey-gold showroom with slowly moving sunlight, centered typography, a metallic sun platform, and the supplied SOLARSALH logo.
 - A 4.65-second entrance brings sunlight from the upper left onto the panels, energizes the circuit, and reveals the website. Visitors can skip it; reduced-motion preferences bypass it.
-- Raised glass panels, aluminum mounts, contact shadows, and a continuously moving golden power circuit beneath the array.
+- Individually modeled silicon wafers with subtle color variation and collector textures, separate reflective glass, extruded aluminum frames, bolts, mounts, and rear wiring.
+- The close-up control separates the glass, cells, and frame. Escape or the return control restores the array.
+- Contact shadows and a continuously moving golden power circuit beneath the array.
 - Scroll through the installation to change the camera angle.
 - Drag the daylight control or use its arrow keys to move between 06:00 and 18:00.
 - Switch between an 8-panel home array and a 12-panel business array.
@@ -48,7 +50,7 @@ Content is separated from presentation in `content.json`. A future admin page ca
 
 ## Checks
 
-Desktop and mobile views were inspected in the desktop browser. Tested the daylight endpoints and midday, the camera transition, both array sizes, pause/resume, contact navigation, and horizontal overflow. The desktop scene ran at approximately 60 fps during inspection. The sunlight entrance, skip button, pause behavior, and single-renderer handoff were checked in the browser. Reduced-motion startup and the delayed-load escape hatch passed isolated checks. JavaScript syntax checks passed.
+Desktop and mobile views were inspected in the desktop browser. Tested the daylight endpoints and midday, the camera transition, both array sizes, pause/resume, contact navigation, and horizontal overflow. The desktop scene ran at approximately 60 fps during inspection. The sunlight entrance, skip button, close-up/return/Escape controls in all three languages, pause behavior, and single-renderer handoff were checked in the browser. Reduced-motion startup and the delayed-load escape hatch passed isolated checks. JavaScript syntax checks passed.
 
 ## Credits
 
