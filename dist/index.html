@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="יום־יום בהיר יותר עם Saleh Solar System. אנרגיה סולארית עם Saleh Zedany." />
+  <title>Saleh Solar System — שלום, שמש.</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+  <a class="skip-link" href="#daylight" data-i18n="skip">דילוג לבקרת אור היום</a>
+  <header class="site-header">
+    <a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — the original sun and solar roofs logo" width="1536" height="1024" /></span></a>
+    <nav data-i18n-aria="navLabel" aria-label="ניווט ראשי"><a href="#experience" data-i18n="experience">מגלים את אור השמש</a><div class="language-switch"><select id="language-select" data-i18n-aria="languageLabel" aria-label="בחירת שפה"><option value="he" lang="he">עברית</option><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select></div><a class="contact-button" href="#contact"><span data-i18n="contactButton">מתחילים עם השמש</span> <span aria-hidden="true">+</span></a></nav>
+  </header>
+  <main>
+    <section id="top" class="journey" data-i18n-aria="journeyLabel" aria-label="יום של שמש עם Saleh Solar System">
+      <div class="stage">
+        <div class="hero-copy"><p class="eyebrow"><span></span> <b data-i18n="heroEyebrow">אנרגיה טובה. בכל יום.</b></p><h1 data-i18n-heading="heroTitle">שלום, <em>שמש.</em></h1></div>
+        <div class="lab-copy" inert><p class="eyebrow"><span></span> <b data-i18n="labEyebrow">קצת אור. הרבה אפשרויות.</b></p><h2 data-i18n-heading="labTitle">הצד המואר של <em>היום.</em></h2></div>
+        <div id="scene" data-i18n-aria="sceneLabel" aria-label="מערכת סולארית תלת־ממדית על במה צהובה"></div>
+        <div class="scene-fallback" hidden><img src="./assets/original-logo.jpg" alt="Saleh Solar System"/><p data-i18n="fallback">ימים בהירים יותר מתחילים כאן.</p></div>
+        <aside class="scene-note"><span class="mini-label" data-i18n="noteLabel">נותנים לשמש לעבוד</span><p class="hero-description" data-i18n-lines="heroDescription">בשביל הגג שלכם.<br> בשביל היום־יום שלכם.<br> בשביל מחר בהיר יותר.</p><a class="round-link" href="#experience" data-i18n-aria="exploreLabel" aria-label="לגלות את המערכת הסולארית"><span aria-hidden="true">+</span></a></aside>
+        <aside class="energy-note"><span class="sun-icon" aria-hidden="true">☀</span><span class="mini-label" data-i18n="energyLabel">יום אחד בשמש</span><div class="energy-reading"><output id="energy-value" dir="ltr">92<small>%</small></output><span data-i18n="peakDaylight">משיא אור היום</span></div><p class="simulation-note" data-i18n="simulation">המחשה של תפוקה סולארית</p><div class="status-line"><span id="status-label">היום נראה בהיר</span></div></aside>
+        <div class="array-tag"><span id="array-caption">מערכת ביתית / 08 פאנלים</span><span class="tag-line"></span></div>
+        <div class="control-deck">
+          <div class="array-controls"><span class="control-label" data-i18n="makeYours">מתאימים לכם</span><div class="system-switch" role="group" data-i18n-aria="systemLabel" aria-label="גודל המערכת הסולארית"><button class="active" data-system="home" aria-pressed="true" data-i18n="home">לבית</button><button data-system="business" aria-pressed="false" data-i18n="business">לעסק</button></div></div>
+          <div id="daylight" class="daylight-control"><div class="daylight-heading"><label for="sun-range" data-i18n="daylight">אור היום, בקצב שלכם.</label><output for="sun-range" id="time-display" dir="ltr">10:30</output></div><div class="daylight-track" dir="ltr"><span>06:00</span><input id="sun-range" type="range" min="6" max="18" step="0.1" value="10.5" data-i18n-aria="timeLabel" aria-label="שעה ביום" aria-valuetext="10:30"/><span>18:00</span></div></div>
+          <div class="explore-controls"><a href="#experience" class="scroll-cue"><span class="scroll-track" aria-hidden="true"><i></i></span><span data-i18n-lines="scroll">גוללים<br>אל השמש</span></a><button id="motion-toggle" class="motion-toggle" aria-pressed="false" aria-label="השהיית התנועה"><span aria-hidden="true">Ⅱ</span></button></div>
+        </div>
+        <div class="journey-progress" aria-hidden="true"><span></span></div>
+      </div>
+      <div id="experience" class="experience-anchor" aria-hidden="true"></div>
+    </section>
+    <section class="contact-section" id="contact">
+      <div class="contact-intro"><p class="eyebrow" data-i18n="contactEyebrow">העתיד נראה בהיר.</p><p data-i18n="contactIntro">אנרגיה טובה מתחילה בשיחה</p></div>
+      <div class="contact-main"><h2 data-i18n-heading="contactTitle">בואו ניתן לגג<br>שלכם <em>לזרוח.</em></h2><div class="contact-details"><span class="contact-kicker"><span data-i18n="sayHello">אומרים שלום ל־</span> <bdi lang="en" dir="ltr">Saleh</bdi></span><div class="owner"><strong lang="en" dir="ltr">Saleh Zedany</strong><span><span data-i18n="owner">בעלים,</span> <bdi lang="en" dir="ltr">Saleh Solar System</bdi></span></div><a class="phone-link" dir="ltr" href="tel:0528184564">052 818 4564</a><a class="email-link" dir="ltr" href="mailto:salhzedany73@gmail.com">salhzedany73@gmail.com</a><p data-i18n="contactDescription">בואו נגלה את האפשרויות שעל הגג שלכם.</p></div></div>
+      <div class="contact-bottom"><span data-i18n="everyone">השמש זורחת בשביל כולם.</span><a href="#top"><span data-i18n="backTop">בחזרה לצד המואר</span> <span aria-hidden="true">☀</span></a></div>
+    </section>
+    <footer><a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — Saleh Solar System" width="1536" height="1024" /></span></a><span class="footer-summary"><bdi lang="en" dir="ltr">Saleh Solar System.</bdi><br><span data-i18n="footerTagline">יום־יום באור חדש.</span></span><a href="https://moosetvs.com" target="_blank" rel="noopener noreferrer"><span data-i18n="credit">עיצוב ופיתוח</span> <strong lang="en" dir="ltr">moosetvs</strong></a></footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
