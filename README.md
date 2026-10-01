@@ -2,6 +2,10 @@
 
 A white-and-yellow, interactive solar showcase for Saleh Zedany, created as a moosetvs portfolio project.
 
+## Review online
+
+[Open the live website](https://saleh-solar-system.meliodasin14.chatgpt.site). The website is publicly viewable; the source repository is private.
+
 ## Open locally
 
 Run `npm start` in this folder, then open http://localhost:4173.
