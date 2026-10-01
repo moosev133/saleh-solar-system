@@ -40,11 +40,35 @@ function updateScroll(){
   $('.journey-progress span').style.width=`${progress*100}%`;
   $('.scroll-cue').href=progress>.5?'#contact':'#experience';
   const contactVisible=$('#contact').getBoundingClientRect().top<innerHeight*.4;
-  document.body.classList.toggle('at-contact',contactVisible);$('.site-header').inert=contactVisible;
+  document.body.classList.toggle('at-contact',contactVisible);$('.site-header').inert=contactVisible||document.documentElement.classList.contains('intro-pending');
   scheduled=false;
 }
 window.addEventListener('scroll',()=>{if(!scheduled){requestAnimationFrame(updateScroll);scheduled=true;}},{passive:true});window.addEventListener('resize',updateScroll);updateScroll();
-try{createSolarScene($('#scene'),state);}catch(error){console.error('3D scene unavailable:',error);$('.scene-fallback').hidden=false;$('#scene').hidden=true;}
+const intro=$('#solar-intro');
+let solarScene;
+function revealWebsite(){
+  clearTimeout(window.solarIntroTimeout);
+  const hadFocus=intro.contains(document.activeElement);
+  document.documentElement.classList.remove('intro-pending');
+  intro.classList.add('intro-complete');intro.inert=true;
+  $('main').inert=false;updateScroll();
+  if(hadFocus)$('#motion-toggle').focus({preventScroll:true});
+  setTimeout(()=>{intro.hidden=true;},700);
+}
+if(document.documentElement.classList.contains('intro-pending')){
+  $('main').inert=true;$('.site-header').inert=true;
+}else{intro.hidden=true;intro.inert=true;}
+function skipIntro(){solarScene?.skipIntro();revealWebsite();}
+$('#intro-skip').addEventListener('click',skipIntro);
+intro.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){event.preventDefault();skipIntro();}
+  if(event.key==='Tab'){event.preventDefault();$('#intro-skip').focus();}
+});
+window.addEventListener('solar-intro-timeout',skipIntro,{once:true});
+reduced.addEventListener('change',event=>{if(event.matches)skipIntro();});
+try{solarScene=createSolarScene($('#scene'),state,revealWebsite);}catch(error){
+  console.error('3D scene unavailable:',error);$('.scene-fallback').hidden=false;$('#scene').hidden=true;revealWebsite();
+}
 function setLines(element,text,heading=false){
   element.replaceChildren();const lines=text.split('\n');
   lines.forEach((line,i)=>{if(i){element.append(document.createElement('br'));element.append(document.createTextNode(' '));}if(!heading){element.append(document.createTextNode(line));return;}const words=line.split(' ');words.forEach((word,j)=>{if(j)element.append(document.createTextNode(' '));if(i===lines.length-1&&j===words.length-1){const em=document.createElement('em');em.textContent=word;element.append(em);}else element.append(document.createTextNode(word));});});

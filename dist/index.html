@@ -2,6 +2,15 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('intro-pending');
+      window.solarIntroTimeout = setTimeout(() => {
+        document.documentElement.classList.remove('intro-pending');
+        window.dispatchEvent(new Event('solar-intro-timeout'));
+      }, 8500);
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
   <meta name="description" content="יום־יום בהיר יותר עם Saleh Solar System. אנרגיה סולארית עם Saleh Zedany." />
@@ -11,6 +20,13 @@
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
+  <div id="solar-intro" role="dialog" aria-modal="true" aria-label="Saleh Solar System" tabindex="-1">
+    <div id="intro-scene" aria-hidden="true"></div>
+    <div class="intro-sunlight" aria-hidden="true"></div>
+    <span class="intro-brand" lang="en" dir="ltr">Saleh Solar System<span class="intro-brand-dot"></span></span>
+    <button id="intro-skip"><span data-i18n="introSkip">כניסה לאתר</span><span aria-hidden="true">↗</span></button>
+    <div class="intro-caption"><p data-i18n="introCaption">הכול מתחיל בקרן אור.</p><div class="intro-track" aria-hidden="true"><span id="intro-progress"></span></div></div>
+  </div>
   <a class="skip-link" href="#daylight" data-i18n="skip">דילוג לבקרת אור היום</a>
   <header class="site-header">
     <a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — the original sun and solar roofs logo" width="1536" height="1024" /></span></a>

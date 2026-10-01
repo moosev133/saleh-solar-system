@@ -18,3 +18,31 @@ html{scroll-behavior:auto}
 :lang(he){font-family:Heebo,Arial,sans-serif}:lang(ar){font-family:Tajawal,Arial,sans-serif}:lang(en){font-family:Manrope,Arial,sans-serif}
 .language-switch select{border:1px solid var(--line);border-radius:999px;color:var(--navy);background:#fff;padding:10px 12px;min-width:96px;max-width:112px;font:inherit;font-size:13px;cursor:pointer}.language-switch select:focus-visible{outline:3px solid #2788df;outline-offset:3px}.site-header nav{gap:22px}.contact-button [data-i18n]{font-size:inherit;line-height:1.2}.eyebrow b{font-weight:inherit}.contact-bottom>a>[data-i18n]{font-size:inherit}.scene-note{left:auto;right:auto;inset-inline-start:var(--page-padding)}.energy-note{left:auto;right:auto;inset-inline-end:var(--page-padding)}.energy-reading output{width:fit-content}.contact-details{text-align:start}.owner>span>span{display:inline;font:inherit;color:inherit}.owner bdi,.contact-kicker bdi{font-family:Manrope,Arial,sans-serif}.contact-details .phone-link,.contact-details .email-link{unicode-bidi:isolate;font-family:Manrope,Arial,sans-serif}.daylight-track,.daylight-track input{direction:ltr}.daylight-heading output,.energy-reading output{font-family:Manrope,Arial,sans-serif;unicode-bidi:isolate}footer>.footer-summary{margin-right:0;margin-left:0;margin-inline-end:auto}footer>.brand .logo-window{transform-origin:center}html[dir=rtl] h1,html[dir=rtl] h2{letter-spacing:-.025em;word-spacing:0;line-height:1.2}html[lang=ar] h1,html[lang=ar] h2{letter-spacing:0;line-height:1.3}html[dir=rtl] .eyebrow,html[dir=rtl] .mini-label,html[dir=rtl] .control-label,html[dir=rtl] .scroll-cue,html[dir=rtl] .contact-intro>p,html[dir=rtl] .contact-kicker,html[dir=rtl] .contact-bottom,html[dir=rtl] .array-tag{letter-spacing:0}html[dir=rtl] .contact-intro .eyebrow{font-size:13px}html[dir=rtl] .owner strong,html[dir=rtl] .email-link{text-align:right}html[dir=rtl] .energy-note .sun-icon{margin-inline-start:0}html[dir=rtl] .hero-description{letter-spacing:0}html[dir=rtl] .contact-main h2{font-size:clamp(58px,6.2vw,100px)}html[lang=ar] .lab-copy h2{font-size:clamp(50px,6.5vw,108px)}
 @media(max-width:760px){.site-header nav{gap:8px}.language-switch select{min-width:78px;max-width:86px;padding:8px 9px;font-size:11px}.contact-button{padding:11px 13px;gap:9px;font-size:11px}.contact-button>span[aria-hidden]{font-size:17px}.logo-window{width:80px;height:69px}.logo-window img{width:166px;left:-43px;top:-18px}.energy-note{text-align:end}.energy-reading output{margin-inline-start:auto}.scene-note{inset-inline-start:var(--page-padding)}.hero-description{max-width:95%}.scene-note .mini-label{font-size:10px}.energy-note .mini-label{font-size:9px}.simulation-note{font-size:9px}.energy-reading>span{font-size:11px}html[dir=rtl] h1{font-size:clamp(44px,11.8vw,72px)}html[dir=rtl] .lab-copy h2{font-size:clamp(32px,8.4vw,55px)}html[dir=rtl] .contact-main h2{font-size:49px}html[dir=rtl] .hero-description{font-size:14px}.daylight-heading label{font-size:13px}.system-switch button{font-size:12px}.footer-summary{margin-inline-start:auto}html[dir=rtl] .scroll-cue{font-size:9px}.contact-bottom{gap:10px}}
+
+/* The entrance uses the same WebGL scene as the page, so there is only one renderer. */
+html{scrollbar-gutter:stable}
+#solar-intro{display:none}
+html.intro-pending{overflow:hidden}
+html.intro-pending .site-header,html.intro-pending main{visibility:hidden;opacity:0}
+html.intro-pending .skip-link{visibility:hidden}
+html.intro-pending #solar-intro,#solar-intro.intro-complete{display:block;position:fixed;inset:0;z-index:100;background:#050912;overflow:hidden;color:#fff}
+#solar-intro.intro-complete{background:#fff;opacity:0;pointer-events:none;transition:opacity .65s ease}
+#solar-intro[hidden]{display:none}
+#intro-scene{position:absolute;inset:0}
+#intro-scene canvas{display:block;width:100%;height:100%}
+.intro-sunlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at -10% -15%,#fff4cbae 0%,#ffd46426 28%,transparent 56%);opacity:var(--intro-light,0);mix-blend-mode:screen}
+.intro-brand{position:absolute;top:40px;left:4.5vw;font-size:15px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}
+.intro-brand-dot{width:7px;height:7px;border-radius:50%;background:#ffdc48;box-shadow:0 0 18px #ffd12e}
+#intro-skip{position:absolute;top:30px;right:4.5vw;background:#ffffff0a;border:1px solid #ffffff35;border-radius:999px;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:18px;font:inherit;font-size:12px;cursor:pointer}
+#intro-skip:hover{background:#ffffff20}#intro-skip:focus-visible{outline-color:#ffdc48}
+.intro-caption{position:absolute;bottom:9%;left:50%;transform:translateX(-50%);width:min(300px,75vw);text-align:center;color:#c0c8d4}
+.intro-caption p{font-size:14px;margin:0 0 23px;letter-spacing:.01em}
+.intro-track{height:1px;background:#ffffff26;width:160px;margin:auto;direction:ltr}
+#intro-progress{display:block;width:100%;height:100%;background:#ffdb46;transform:scaleX(0);transform-origin:left;box-shadow:0 0 12px #ffcb44}
+@media(max-width:760px){.intro-brand{top:29px;left:6vw;font-size:12px}#intro-skip{top:19px;right:6vw;padding:10px 14px;font-size:11px;gap:10px}.intro-caption{bottom:12%}}
+
+@media(min-width:761px){#scene{bottom:15%}.array-tag{bottom:14.6%}}
+
+html.intro-pending{background:#050912}
+
+@media(max-width:760px){.array-tag{bottom:36.5%}}

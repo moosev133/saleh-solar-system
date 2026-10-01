@@ -45,7 +45,9 @@ export const translations = {
     "everyone": "SUNSHINE IS FOR EVERYONE.",
     "backTop": "Back to the sunny side",
     "footerTagline": "A brighter kind of everyday.",
-    "credit": "Design & development by"
+    "credit": "Design & development by",
+    "introSkip": "Enter website",
+    "introCaption": "It starts with a little light."
   },
   "he": {
     "dir": "rtl",
@@ -93,7 +95,9 @@ export const translations = {
     "everyone": "השמש זורחת בשביל כולם.",
     "backTop": "בחזרה לצד המואר",
     "footerTagline": "יום־יום באור חדש.",
-    "credit": "עיצוב ופיתוח"
+    "credit": "עיצוב ופיתוח",
+    "introSkip": "כניסה לאתר",
+    "introCaption": "הכול מתחיל בקרן אור."
   },
   "ar": {
     "dir": "rtl",
@@ -141,6 +145,8 @@ export const translations = {
     "everyone": "الشمس تشرق للجميع.",
     "backTop": "العودة إلى الجانب المشرق",
     "footerTagline": "كل يوم أكثر إشراقًا.",
-    "credit": "تصميم وتطوير"
+    "credit": "تصميم وتطوير",
+    "introSkip": "الدخول إلى الموقع",
+    "introCaption": "كل شيء يبدأ بشعاع ضوء."
   }
 };
