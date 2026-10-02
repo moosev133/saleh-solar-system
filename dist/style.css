@@ -82,3 +82,5 @@ footer{background:linear-gradient(110deg,#faf8f0,#eee6d5)}
 
 /* Clip decorative light rings without creating an internal scrolling surface. */
 .stage{overflow:clip}.site-header{mix-blend-mode:multiply}
+/* Preserve space between the scene toolbar and the control card on shorter desktops. */
+@media(min-width:761px){#scene{bottom:17%}.scene-toolbar{bottom:calc(14.2% + 12px)}}
