@@ -34,6 +34,8 @@ jobs:
           node --check dist/app.js
           node --check dist/scene.js
           node --check dist/translations.js
+          node --check dist/admin.js
+          node --check dist/gallery.js
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload website

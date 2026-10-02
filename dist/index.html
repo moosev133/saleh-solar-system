@@ -17,6 +17,7 @@
   <title>Saleh Solar System — שלום, שמש.</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
   <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./gallery.css?v=studio-1" />
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head>
 <body>
@@ -30,7 +31,7 @@
   <a class="skip-link" href="#daylight" data-i18n="skip">דילוג לבקרת אור היום</a>
   <header class="site-header">
     <a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — the original sun and solar roofs logo" width="1536" height="1024" /></span></a>
-    <nav data-i18n-aria="navLabel" aria-label="ניווט ראשי"><a href="#experience" data-i18n="experience">מגלים את אור השמש</a><div class="language-switch"><select id="language-select" data-i18n-aria="languageLabel" aria-label="בחירת שפה"><option value="he" lang="he">עברית</option><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select></div><a class="contact-button" href="#contact"><span data-i18n="contactButton">מתחילים עם השמש</span> <span aria-hidden="true">+</span></a></nav>
+    <nav data-i18n-aria="navLabel" aria-label="ניווט ראשי"><a href="#experience" data-i18n="experience">מגלים את אור השמש</a><a class="gallery-nav" href="#gallery" data-gallery-text="nav" hidden>מהשטח</a><div class="language-switch"><select id="language-select" data-i18n-aria="languageLabel" aria-label="בחירת שפה"><option value="he" lang="he">עברית</option><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select></div><a class="contact-button" href="#contact"><span data-i18n="contactButton">מתחילים עם השמש</span> <span aria-hidden="true">+</span></a></nav>
   </header>
   <main>
     <section id="top" class="journey" data-i18n-aria="journeyLabel" aria-label="יום של שמש עם Saleh Solar System">
@@ -51,13 +52,18 @@
       </div>
       <div id="experience" class="experience-anchor" aria-hidden="true"></div>
     </section>
+    <section id="gallery" class="gallery-section" hidden aria-labelledby="gallery-title">
+      <div class="gallery-header"><div><p class="eyebrow" data-gallery-text="eyebrow">רגעים מהצד המואר</p><h2 id="gallery-title" data-gallery-text="title">השמש. בעבודה.</h2><p data-gallery-text="intro">תמונות וסרטונים מהשטח, דרך העיניים של Saleh.</p></div><div class="gallery-filters"><button type="button" data-gallery-filter="all" data-gallery-text="all" aria-pressed="true">הכול</button><button type="button" data-gallery-filter="image" data-gallery-text="image" aria-pressed="false">תמונות</button><button type="button" data-gallery-filter="video" data-gallery-text="video" aria-pressed="false">סרטונים</button></div></div><div id="gallery-grid" class="gallery-grid"></div><p id="gallery-empty" data-gallery-text="empty" hidden></p><button id="gallery-more" data-gallery-text="more" hidden>עוד רגעים</button>
+    </section>
+    <dialog id="gallery-dialog" aria-labelledby="gallery-full-title"><button id="gallery-close" type="button" aria-label="סגירה">×</button><div id="gallery-full-media"></div><h3 id="gallery-full-title" dir="auto"></h3><p id="gallery-full-caption" dir="auto"></p></dialog>
     <section class="contact-section" id="contact">
       <div class="contact-intro"><p class="eyebrow" data-i18n="contactEyebrow">העתיד נראה בהיר.</p><p data-i18n="contactIntro">אנרגיה טובה מתחילה בשיחה</p></div>
       <div class="contact-main"><h2 data-i18n-heading="contactTitle">בואו ניתן לגג<br>שלכם <em>לזרוח.</em></h2><div class="contact-details"><span class="contact-kicker"><span data-i18n="sayHello">אומרים שלום ל־</span> <bdi lang="en" dir="ltr">Saleh</bdi></span><div class="owner"><strong lang="en" dir="ltr">Saleh Zedany</strong><span><span data-i18n="owner">בעלים,</span> <bdi lang="en" dir="ltr">Saleh Solar System</bdi></span></div><a class="phone-link" dir="ltr" href="tel:0528184564">052 818 4564</a><a class="email-link" dir="ltr" href="mailto:salhzedany73@gmail.com">salhzedany73@gmail.com</a><p data-i18n="contactDescription">בואו נגלה את האפשרויות שעל הגג שלכם.</p></div></div>
       <div class="contact-bottom"><span data-i18n="everyone">השמש זורחת בשביל כולם.</span><a href="#top"><span data-i18n="backTop">בחזרה לצד המואר</span> <span aria-hidden="true">☀</span></a></div>
     </section>
-    <footer><a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — Saleh Solar System" width="1536" height="1024" /></span></a><span class="footer-summary"><bdi lang="en" dir="ltr">Saleh Solar System.</bdi><br><span data-i18n="footerTagline">יום־יום באור חדש.</span></span><a href="https://moosetvs.com" target="_blank" rel="noopener noreferrer"><span data-i18n="credit">עיצוב ופיתוח</span> <strong lang="en" dir="ltr">moosetvs</strong></a></footer>
+    <footer><a class="brand" href="#top" data-i18n-aria="homeLabel" aria-label="Saleh Solar System — עמוד הבית"><span class="logo-window"><img src="./assets/original-logo.jpg" alt="SOLARSALH — Saleh Solar System" width="1536" height="1024" /></span></a><span class="footer-summary"><bdi lang="en" dir="ltr">Saleh Solar System.</bdi><br><span data-i18n="footerTagline">יום־יום באור חדש.</span></span><a href="https://moosetvs.com" target="_blank" rel="noopener noreferrer"><span data-i18n="credit">עיצוב ופיתוח</span> <strong lang="en" dir="ltr">moosetvs</strong></a><a class="admin-link" href="./admin.html" data-gallery-text="admin">ניהול תוכן</a></footer>
   </main>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=studio-1"></script>
+  <script type="module" src="./gallery.js?v=studio-1"></script>
 </body>
 </html>

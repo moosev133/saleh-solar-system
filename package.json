@@ -3,5 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node server.mjs", "start": "node server.mjs", "check": "node --check server.mjs && node --check dist/app.js && node --check dist/scene.js" }
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check dist/app.js && node --check dist/scene.js && node --check dist/admin.js && node --check dist/gallery.js && node --check worker/index.js",
+    "build": "node scripts/build.mjs",
+    "dev:admin": "node scripts/build.mjs && node scripts/dev-admin.mjs",
+    "db:generate": "drizzle-kit generate",
+    "test": "node scripts/build.mjs && node --test tests/admin.test.mjs"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2",
+    "miniflare": "^4.20260515.0"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "^0.25.0"
+    },
+    "miniflare": {
+      "sharp": "^0.35.4",
+      "undici": "^7.29.1"
+    }
+  }
 }

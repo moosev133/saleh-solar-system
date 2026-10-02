@@ -231,7 +231,7 @@ export function createSolarScene(container, state, onIntroComplete = () => {}) {
   }
   function frame(){
     const rawDelta=clock.getDelta(),dt=Math.min(rawDelta,.05);
-    if(!visible||(!introActive&&state.onScreen===false))return;
+    if(!visible||state.galleryOpen||(!introActive&&state.onScreen===false))return;
     const moving=!state.paused;
     if(moving)time+=dt;
     if(introActive)introTime+=Math.min(rawDelta,.1);

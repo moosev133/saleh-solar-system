@@ -14,7 +14,7 @@ Run `npm start` in this folder, then open http://localhost:4173.
 On this Mac, you can also double-click `start.command`.
 The server binds only to your computer and serves the `dist` folder.
 
-No build or dependency installation is needed. Three.js and the font are bundled locally.
+The public showcase still runs without dependencies. Three.js and all fonts are bundled locally. The content backend and its local tests need `npm ci`.
 
 ## Languages
 
@@ -46,9 +46,38 @@ Translations are in `dist/translations.js`. Shared owner/contact information is 
 - `dist/assets/original-logo.jpg`: supplied logo, preserved unchanged and displayed in the header and footer.
 - `server.mjs`: small local-only static server.
 
-## Future admin page
+## Content studio
 
-Content is separated from presentation in `content.json`. A future admin page can replace that read with an authenticated content API and persistent storage while preserving the current scene and page components. No admin, authentication, or write endpoint has been added in this version.
+[Open the content studio](https://saleh-solar-system.meliodasin14.chatgpt.site/admin). The public website remains on GitHub Pages; its gallery reads published content from this backend. The footer also contains a management link.
+
+- Upload JPG, PNG or WebP images (12 MiB maximum) and MP4 or WebM videos (40 MiB maximum).
+- Uploads start as private drafts. Add a title and optional caption, then enable “Show this on the website” and save.
+- Edit, unpublish, move an item to the beginning, or permanently delete it.
+- Public photos open at full size; videos use native playback controls and support byte-range seeking.
+- The gallery appears after the 3D experience once the first item is published. Empty galleries stay hidden. It loads six cards initially, with filters and a “More moments” button.
+- Hebrew, Arabic and English interfaces. Uploaded titles and captions remain exactly as written, in every language.
+- The library holds up to 200 items. Nothing is stored only in the browser: D1 stores records and R2 stores the media.
+
+### Private first-time setup
+
+Give the separately supplied activation link only to Saleh. It contains a one-time key and must never be committed to this public repository. Saleh opens it, signs in with his ChatGPT account, and selects “Activate my access”. This binds the studio to that account’s stable authenticated identity. Later, he can use the ordinary studio link and sign in with the same account. The public gallery needs no login.
+
+The key is read from the URL fragment and removed from the address bar immediately. Only its SHA-256 hash is configured in the hosted `ADMIN_SETUP_HASH` secret. Claiming access is atomic and can happen once. Signing in alone never grants editing access. Recovering or transferring access requires the site owner to make an explicit server-side account change; there is no public reset endpoint.
+
+### Backend and local development
+
+The same existing Sites project now runs a Cloudflare-compatible Worker in `worker/index.js`, with logical `DB` and `BUCKET` bindings. Production identity comes only from the platform’s verified sign-in headers. Every write checks the stored owner identity and same-origin requests. File type signatures, payload sizes and text lengths are validated server-side. Draft media is also protected when its URL is requested directly.
+
+Run `npm ci`, then `npm run dev:admin`. Open http://localhost:4174/admin. The loopback-only development server simulates sign-in and persists test data under ignored `.local-data/`. Its setup key is 64 copies of `1`. This simulation is excluded from the production Worker. `npm start` still serves the static site on port 4173 against the production read-only gallery API.
+
+- `dist/admin.*`: studio interface and GitHub Pages entry point.
+- `dist/gallery.*`: public gallery and media viewer.
+- `worker/`: request handling, authorization and storage operations.
+- `db/schema.ts`, `drizzle/`: schema and versioned migrations.
+- `scripts/build.mjs`: packages public files and Worker output without production secrets.
+- `tests/admin.test.mjs`: real local D1/R2 lifecycle and security checks.
+
+Run `npm run check` and `npm test` before release. Generate schema changes with `npm run db:generate`; keep already deployed migrations immutable. Publish the backend through the existing Sites project, then push the public frontend to GitHub. The GitHub workflow uploads only tracked frontend files under `dist`; generated `dist/server` and `dist/.openai` are ignored and excluded from GitHub commits. Admin content updates require neither a new Git commit nor a frontend deployment.
 
 ## Checks
 

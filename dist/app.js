@@ -1,4 +1,4 @@
-import { createSolarScene } from './scene.js';
+import { createSolarScene } from './scene.js?v=studio-1';
 import { translations } from './translations.js';
 const $=selector=>document.querySelector(selector);
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -49,8 +49,8 @@ function updateScroll(){
   hero.style.opacity=heroOpacity;hero.style.transform=`translateY(${-transition*55}px)`;hero.inert=heroOpacity<.1;
   lab.style.opacity=labOpacity;lab.style.transform=`translateY(${(1-labOpacity)*25}px)`;lab.inert=labOpacity<.5;
   $('.journey-progress span').style.width=`${progress*100}%`;
-  $('.scroll-cue').href=progress>.5?'#contact':'#experience';
-  const contactVisible=$('#contact').getBoundingClientRect().top<innerHeight*.4;
+  $('.scroll-cue').href=progress>.5?($('#gallery')&&!$('#gallery').hidden?'#gallery':'#contact'):'#experience';
+  const contactVisible=journey.getBoundingClientRect().bottom<innerHeight*.4||$('#contact').getBoundingClientRect().top<innerHeight*.4;
   document.body.classList.toggle('at-contact',contactVisible);$('.site-header').inert=contactVisible||document.documentElement.classList.contains('intro-pending');
   scheduled=false;
 }
@@ -62,6 +62,7 @@ function revealWebsite(){
   const hadFocus=intro.contains(document.activeElement);
   document.documentElement.classList.remove('intro-pending');
   intro.classList.add('intro-complete');intro.inert=true;
+  window.dispatchEvent(new Event('solar-intro-ready'));
   $('main').inert=false;updateScroll();
   if(hadFocus)$('#motion-toggle').focus({preventScroll:true});
   setTimeout(()=>{intro.hidden=true;},700);
@@ -105,3 +106,5 @@ fetch(new URL('./content.json',import.meta.url)).then(response=>{if(!response.ok
   $('.phone-link').textContent=content.phoneDisplay;$('.phone-link').href=`tel:${content.phone}`;
   $('.email-link').textContent=content.email;$('.email-link').href=`mailto:${content.email}`;$('.owner strong').textContent=content.owner;
 }).catch(error=>console.warn(error.message));
+
+window.addEventListener('gallery-open',event=>{state.galleryOpen=event.detail;});
