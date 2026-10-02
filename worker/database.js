@@ -2,9 +2,6 @@ export function database(env) {
   if (!env.DB) throw new Error('Content database unavailable');
   return env.DB;
 }
-export async function owner(env) {
-  return database(env).prepare('SELECT user_id FROM admin WHERE slot = 1').first();
-}
 export function item(env, id) {
   return database(env).prepare('SELECT * FROM media WHERE id = ?').bind(id).first();
 }

@@ -58,17 +58,21 @@ Translations are in `dist/translations.js`. Shared owner/contact information is 
 - Hebrew, Arabic and English interfaces. Uploaded titles and captions remain exactly as written, in every language.
 - The library holds up to 200 items. Nothing is stored only in the browser: D1 stores records and R2 stores the media.
 
-### Private first-time setup
+### Admin sign-in
 
-Give the separately supplied activation link only to Saleh. It contains a one-time key and must never be committed to this public repository. Saleh opens it, signs in with his ChatGPT account, and selects “Activate my access”. This binds the studio to that account’s stable authenticated identity. Later, he can use the ordinary studio link and sign in with the same account. The public gallery needs no login.
+The studio uses its own username and password. No ChatGPT account or activation link is needed. The public gallery still requires no login. Production credentials are supplied privately to the owner and are never committed here.
 
-The key is read from the URL fragment and removed from the address bar immediately. Only its SHA-256 hash is configured in the hosted `ADMIN_SETUP_HASH` secret. Claiming access is atomic and can happen once. Signing in alone never grants editing access. Recovering or transferring access requires the site owner to make an explicit server-side account change; there is no public reset endpoint.
+The hosted `ADMIN_CREDENTIALS` secret contains the username and a PBKDF2-SHA-256 verifier (600,000 iterations, random 32-byte salt, 32-byte hash). Only the salted verifier is stored; the plaintext password is not. Browser sessions use random 256-bit tokens in Secure, HttpOnly, SameSite=Strict host-only cookies and expire after eight hours. D1 stores only hashes of these tokens. Signing out revokes the session immediately. Credential rotation invalidates every old session. D1-backed limits allow ten login attempts per IP and 100 overall per 15-minute window; responses do not distinguish incorrect usernames from incorrect passwords.
+
+Old account-activation records remain only for migration history. They grant no access, the claim endpoint is removed, and platform identity headers are ignored. Retire the old `ADMIN_SETUP_HASH` secret when deploying this version. There is no public password reset endpoint; the site owner changes the verifier through the hosting environment and redeploys. Password-manager autofill is supported.
+
+To generate a replacement verifier, run `node scripts/create-credentials.mjs`. It accepts a JSON object with `username` and `password` on hidden standard input and returns only the verifier JSON. Configure that JSON as the secret `ADMIN_CREDENTIALS`, never as a frontend value or build argument. Do not save production credentials in this public repository.
 
 ### Backend and local development
 
-The same existing Sites project now runs a Cloudflare-compatible Worker in `worker/index.js`, with logical `DB` and `BUCKET` bindings. Production identity comes only from the platform’s verified sign-in headers. Every write checks the stored owner identity and same-origin requests. File type signatures, payload sizes and text lengths are validated server-side. Draft media is also protected when its URL is requested directly.
+The existing Sites project runs a Cloudflare-compatible Worker in `worker/index.js`, with logical `DB` and `BUCKET` bindings. Every write requires a valid server session and the exact same Origin. File type signatures, payload sizes and text lengths are validated server-side. Draft media is protected when its URL is requested directly.
 
-Run `npm ci`, then `npm run dev:admin`. Open http://localhost:4174/admin. The loopback-only development server simulates sign-in and persists test data under ignored `.local-data/`. Its setup key is 64 copies of `1`. This simulation is excluded from the production Worker. `npm start` still serves the static site on port 4173 against the production read-only gallery API.
+Run `npm ci`, then `npm run dev:admin`. Open http://localhost:4174/admin and sign in with the **local-only** username `preview` and password `local-preview-only`. The loopback-only development server uses the same password/session implementation and persists test data under ignored `.local-data/`. These test credentials are excluded from the production Worker. `npm start` still serves the static site on port 4173 against the production read-only gallery API.
 
 - `dist/admin.*`: studio interface and GitHub Pages entry point.
 - `dist/gallery.*`: public gallery and media viewer.

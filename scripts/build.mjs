@@ -15,7 +15,9 @@ await rm('dist/server', { recursive:true, force:true });
 await mkdir('dist/server', { recursive:true });
 await mkdir('dist/.openai', { recursive:true });
 await copyFile('.openai/hosting.json', 'dist/.openai/hosting.json');
-const database = (await readFile('worker/database.js','utf8')).replaceAll('export ', '');
-const worker = (await readFile('worker/index.js','utf8')).replace(/^import .*;\n/gm,'');
-await writeFile('dist/server/index.js', 'const assets = ' + JSON.stringify(assets) + ';\n' + database + '\n' + worker);
+const modules = await Promise.all(['http', 'database', 'auth', 'index'].map(async name => {
+  const source = await readFile(`worker/${name}.js`, 'utf8');
+  return source.replace(/^import .*;\n/gm, '').replace(/^export (?!default)/gm, '');
+}));
+await writeFile('dist/server/index.js', 'const assets = ' + JSON.stringify(assets) + ';\n' + modules.join('\n'));
 console.log(`Built content Worker with ${Object.keys(assets).length} website assets.`);

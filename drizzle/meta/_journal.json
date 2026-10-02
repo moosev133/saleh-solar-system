@@ -8,6 +8,13 @@
       "when": 1790901280067,
       "tag": "0000_chief_mauler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790903471838,
+      "tag": "0001_kind_mephisto",
+      "breakpoints": true
     }
   ]
 }

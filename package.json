@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check dist/app.js && node --check dist/scene.js && node --check dist/admin.js && node --check dist/gallery.js && node --check worker/index.js",
+    "check": "node --check server.mjs && node --check dist/app.js && node --check dist/scene.js && node --check dist/admin.js && node --check dist/gallery.js && node --check worker/index.js && node --check worker/auth.js && node --check worker/http.js",
     "build": "node scripts/build.mjs",
     "dev:admin": "node scripts/build.mjs && node scripts/dev-admin.mjs",
     "db:generate": "drizzle-kit generate",
-    "test": "node scripts/build.mjs && node --test tests/admin.test.mjs"
+    "test": "node scripts/build.mjs && node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.10",

@@ -1,22 +1,21 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { runtime, LOCAL_SETUP } from '../scripts/local-runtime.mjs';
+import { runtime, LOCAL_USERNAME, LOCAL_PASSWORD } from '../scripts/local-runtime.mjs';
 test('content lifecycle, authorization, validation, CORS and video ranges',async t=>{
   const mf=await runtime();t.after(()=>mf.dispose());
   const origin='https://saleh.example';
+  let cookie = '';
   const request=(path,method='GET',body,who='owner',extra={})=>{
-    const headers={Origin:origin,...extra};if(who)headers['oai-authenticated-user-id']=who;
+    const headers={Origin:origin,...extra};if(who === 'owner' && cookie) headers.Cookie = cookie; else if(who) headers['oai-authenticated-user-id']=who;
     let data=body;if(body && !(body instanceof Uint8Array)){data=JSON.stringify(body);headers['Content-Type']='application/json';}
     return mf.dispatchFetch(origin+path,{method,headers,body:data});
   };
   assert.equal((await request('/api/admin/media','GET',undefined,null)).status,401);
-  assert.equal((await request('/api/claim','POST',{token:LOCAL_SETUP},null)).status,401);
-  assert.equal((await request('/api/claim','POST',{token:'f'.repeat(64)})).status,403);
-  assert.equal((await request('/api/claim','POST',{token:LOCAL_SETUP},'owner',{Origin:'https://evil.example'})).status,403);
-  assert.equal((await request('/api/claim','POST',{token:LOCAL_SETUP})).status,200);
-  assert.equal((await request('/api/claim','POST',{token:LOCAL_SETUP},'other')).status,409);
-  assert.equal((await request('/api/admin/media','GET',undefined,'other')).status,403);
+  assert.equal((await request('/api/claim','POST',{token:'1'.repeat(64)})).status,404);
+  const signedIn = await request('/api/login','POST',{username:LOCAL_USERNAME,password:LOCAL_PASSWORD});
+  assert.equal(signedIn.status,200); cookie=signedIn.headers.get('Set-Cookie').split(';')[0];
+  assert.equal((await request('/api/admin/media','GET',undefined,'other')).status,401);
   assert.equal((await request('/api/admin/media','POST',new Uint8Array([1,2]),'owner',{'Content-Type':'text/html'})).status,415);
   assert.equal((await request('/api/admin/media','POST',new Uint8Array([1,2]),'owner',{'Content-Type':'image/png'})).status,415);
   const image=new Uint8Array(await readFile('dist/assets/original-logo.jpg'));

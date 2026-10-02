@@ -1,20 +1,12 @@
 import { assets } from './assets.js';
-import { database, owner, item, serialize } from './database.js';
+import { database, item, serialize } from './database.js';
+import { HttpError, fail, json } from './http.js';
+import { authorized, login, logout } from './auth.js';
 
 const PUBLIC_ORIGIN = 'https://moosev133.github.io';
 const MAX_IMAGE = 12 * 1024 * 1024;
 const MAX_VIDEO = 40 * 1024 * 1024;
 const TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm']);
-class HttpError extends Error { constructor(status, code) { super(code); this.status = status; } }
-const fail = (status, code) => { throw new HttpError(status, code); };
-const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
-// The Sites dispatcher verifies identity and strips spoofed authentication headers.
-function identity(request) { return request.headers.get('oai-authenticated-user-id'); }
-async function authorized(request, env) {
-  const id = identity(request);
-  if (!id) return false;
-  return (await owner(env))?.user_id === id;
-}
 function sameOrigin(request) {
   if (request.headers.get('Origin') !== new URL(request.url).origin) fail(403, 'origin');
 }
@@ -48,9 +40,6 @@ function signature(data, mime) {
   if (mime === 'video/webm') return hex(26,69,223,163);
   if (mime === 'video/mp4') return ascii(4,8) === 'ftyp' && ['isom','iso2','mp41','mp42','avc1','M4V ','MSNV','dash'].includes(ascii(8,12));
   return false;
-}
-async function hash(value) {
-  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))), b => b.toString(16).padStart(2,'0')).join('');
 }
 function publicCors(response, request) {
   const headers = new Headers(response.headers);
@@ -88,20 +77,19 @@ async function route(request, env) {
   const mediaMatch = /^\/media\/([a-f0-9-]{36})$/.exec(path);
   if (mediaMatch && ['GET','HEAD'].includes(method)) return publicCors(await mediaResponse(request, env, mediaMatch[1]), request);
   if (path === '/api/session' && method === 'GET') {
-    const admin = await owner(env);
-    return json({ signedIn: Boolean(identity(request)), admin: Boolean(identity(request) && admin?.user_id === identity(request)), setupAvailable: !admin });
+    const admin = await authorized(request, env);
+    return json({ signedIn: admin, admin });
   }
-  if (path === '/api/claim' && method === 'POST') {
+  if (path === '/api/login' && method === 'POST') {
     sameOrigin(request);
-    const userId = identity(request); if (!userId) fail(401, 'signin');
-    const data = await bodyJSON(request);
-    if (typeof data.token !== 'string' || data.token.length !== 64 || !env.ADMIN_SETUP_HASH || await hash(data.token) !== env.ADMIN_SETUP_HASH) fail(403, 'setup_invalid');
-    const result = await database(env).prepare('INSERT OR IGNORE INTO admin (slot, user_id, created_at) VALUES (1, ?, ?)').bind(userId, Date.now()).run();
-    if (result.meta.changes !== 1) fail(409, 'setup_used');
-    return json({ ok: true });
+    return login(request, env, await bodyJSON(request));
+  }
+  if (path === '/api/logout' && method === 'POST') {
+    sameOrigin(request);
+    return logout(request, env);
   }
   if (path.startsWith('/api/admin/')) {
-    if (!(await authorized(request, env))) fail(identity(request) ? 403 : 401, 'access');
+    if (!(await authorized(request, env))) fail(401, 'access');
     if (method !== 'GET') sameOrigin(request);
     if (path === '/api/admin/media' && method === 'GET') {
       const rows = await database(env).prepare('SELECT * FROM media ORDER BY position DESC, created_at DESC LIMIT 200').all();
@@ -153,7 +141,7 @@ export default {
     try { response = await route(request, env); }
     catch (error) {
       if (!(error instanceof HttpError)) console.error('Content request failed', new URL(request.url).pathname, error.message);
-      response = json({ error: error instanceof HttpError ? error.message : 'unavailable' }, error.status || 503);
+      response = json({ error: error instanceof HttpError ? error.message : 'unavailable' }, error.status || 503, error instanceof HttpError ? error.headers : {});
       if (new URL(request.url).pathname === '/api/gallery') response = publicCors(response, request);
     }
     const headers = new Headers(response.headers);
