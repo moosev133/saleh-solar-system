@@ -4,7 +4,9 @@ An ivory-and-gold, interactive solar showcase for Saleh Zedany, created as a moo
 
 ## Review online
 
-[Open the live website](https://saleh-solar-system.meliodasin14.chatgpt.site). The website is publicly viewable; the source repository is private.
+[Open the live website](https://moosev133.github.io/saleh-solar-system/). The website and [source repository](https://github.com/moosev133/saleh-solar-system) are public.
+
+The GitHub Pages workflow in `.github/workflows/pages.yml` publishes the `dist` folder automatically when website changes are pushed to `main`. It can also be run manually from the Actions tab.
 
 ## Open locally
 
