@@ -1,3 +1,4 @@
+import { scrypt } from '@noble/hashes/scrypt.js';
 import { database } from './database.js';
 import { HttpError, fail, json } from './http.js';
 
@@ -18,10 +19,10 @@ function equalBytes(a, b) {
 let cachedCredentials;
 async function credentials(env) {
   const raw = env.ADMIN_CREDENTIALS;
-  if (cachedCredentials?.raw === raw) return cachedCredentials;
+  if (cachedCredentials && cachedCredentials.raw === raw) return cachedCredentials;
   let config;
   try { config = JSON.parse(raw); } catch { fail(503, 'unavailable'); }
-  if (config.algorithm !== 'pbkdf2-sha256' || config.iterations !== 600000 ||
+  if (config.algorithm !== 'scrypt' || config.N !== 16384 || config.r !== 8 || config.p !== 5 ||
       typeof config.username !== 'string' || !config.username ||
       !/^[a-f0-9]{64}$/.test(config.salt) || !/^[a-f0-9]{64}$/.test(config.hash)) fail(503, 'unavailable');
   cachedCredentials = { ...config, raw, version: await digest(raw), usernameHash: await digest(config.username) };
@@ -67,9 +68,10 @@ export async function login(request, env, data) {
   if (typeof data.username !== 'string' || typeof data.password !== 'string' ||
       !data.username || data.username.length > 100 || !data.password || data.password.length > 256) fail(401, 'invalid_credentials');
   const config = await credentials(env);
-  const key = await crypto.subtle.importKey('raw', encoder.encode(data.password), 'PBKDF2', false, ['deriveBits']);
-  const derived = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256',
-    salt: fromHex(config.salt), iterations: config.iterations }, key, 256));
+  // Standard scrypt settings: 16 MiB, r=8, p=5. The bundled implementation also
+  // works on production Workers with a lower native PBKDF2 iteration ceiling.
+  const derived = scrypt(encoder.encode(data.password), fromHex(config.salt),
+    { N:config.N, r:config.r, p:config.p, dkLen:32, maxmem:32 * 1024 * 1024 });
   // Always perform the expensive password check, even for an unknown username.
   const userMatches = equalBytes(fromHex(await digest(data.username.trim())), fromHex(config.usernameHash));
   const passwordMatches = equalBytes(derived, fromHex(config.hash));

@@ -1,11 +1,11 @@
 import { Miniflare } from 'miniflare';
 import { readdir, readFile } from 'node:fs/promises';
-import { pbkdf2Sync } from 'node:crypto';
+import { scryptSync } from 'node:crypto';
 // Test-only credentials; production credentials are configured separately as a runtime secret.
 export const LOCAL_USERNAME = 'preview';
 export const LOCAL_PASSWORD = 'local-preview-only';
 const salt = '12'.repeat(32);
-export const LOCAL_CREDENTIALS = JSON.stringify({ algorithm:'pbkdf2-sha256', iterations:600000, username:LOCAL_USERNAME, salt, hash:pbkdf2Sync(LOCAL_PASSWORD, Buffer.from(salt,'hex'),600000,32,'sha256').toString('hex') });
+export const LOCAL_CREDENTIALS = JSON.stringify({ algorithm:'scrypt', N:16384, r:8, p:5, username:LOCAL_USERNAME, salt, hash:scryptSync(LOCAL_PASSWORD, Buffer.from(salt,'hex'),32,{N:16384,r:8,p:5,maxmem:32*1024*1024}).toString('hex') });
 export async function runtime(persist = false) {
   const mf = new Miniflare({ modules:true, modulesRules:[{type:'ESModule',include:['**/*.js']}], scriptPath:'dist/server/index.js',
     compatibilityDate:'2026-05-15', d1Databases:['DB'], r2Buckets:['BUCKET'],
